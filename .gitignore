@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+data/aircraftDatabase.csv
+data/airports.csv
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
