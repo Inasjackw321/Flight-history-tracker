@@ -31,13 +31,20 @@ def load() -> pd.DataFrame:
     if _df is not None:
         return _df
     _download_db()
+    _COLS = [
+        "icao24", "registration", "manufacturername", "model", "typecode",
+        "serialnumber", "linenumber", "icaoaircrafttype", "operator",
+        "operatorcallsign", "owner", "built", "firstflightdate",
+        "engines", "categoryDescription",
+    ]
+    _RENAME = {"manufacturername": "manufacturer", "categoryDescription": "category"}
     _df = pd.read_csv(
         _DB_PATH,
-        usecols=["icao24", "manufacturername", "model", "typecode", "operator"],
+        usecols=_COLS,
         dtype=str,
         low_memory=True,
     )
-    _df.columns = ["icao24", "manufacturer", "model", "typecode", "operator"]
+    _df = _df.rename(columns=_RENAME)
     _df["icao24"] = _df["icao24"].str.strip().str.lower()
     _df = _df.drop_duplicates(subset="icao24")
     _df = _df.set_index("icao24")

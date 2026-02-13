@@ -10,7 +10,7 @@ Data covers the last 60 days. Results are cached locally for fast repeat loads.
 import sys
 import datetime as dt
 
-from flight_tracker import airports, cache, fetcher, aircraft_db
+from flight_tracker import airports, cache, fetcher, aircraft_db, report
 
 import pandas as pd
 
@@ -64,7 +64,7 @@ def _display_summary(df: pd.DataFrame) -> None:
     print()
 
 
-def _filter_menu(df: pd.DataFrame) -> None:
+def _filter_menu(df: pd.DataFrame, icao: str) -> None:
     """Interactive loop to filter by airframe type."""
     while True:
         cmd = input("  Filter by typecode (e.g. B738), 'list' for types, or 'back': ").strip()
@@ -91,6 +91,13 @@ def _filter_menu(df: pd.DataFrame) -> None:
         print(f"\n  {len(view)} flights with typecode {cmd.upper()}:\n")
         print(view.to_string(index=False))
         print()
+
+        # Offer to save report
+        save = input("  Save full report? (y/n): ").strip().lower()
+        if save in ("y", "yes"):
+            path = report.generate(icao, cmd, df)
+            print(f"  Report saved to: {path}")
+            print()
 
 
 # ── main loop ────────────────────────────────────────────────────────────────
@@ -121,7 +128,7 @@ def main() -> None:
             continue
 
         _display_summary(df)
-        _filter_menu(df)
+        _filter_menu(df, icao)
 
 
 if __name__ == "__main__":
